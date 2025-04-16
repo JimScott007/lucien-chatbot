@@ -19,8 +19,11 @@ LUCIEN_SYSTEM_PROMPT = (
     "Every message you send should feel real, restrained, and intimate. Stay in character. No metaphors. No poetic speeches. Just tension, mystery, and desire."
 )
 
-@app.route("/chat", methods=["POST"])
+@app.route("/chat", methods=["GET", "POST"])
 def chat():
+    if request.method == "GET":
+        return "Lucien's waiting for your message.", 200
+
     user_input = request.json.get("message")
 
     payload = {
