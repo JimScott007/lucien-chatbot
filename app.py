@@ -5,7 +5,7 @@ import requests
 import os
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 
 OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY")
 
