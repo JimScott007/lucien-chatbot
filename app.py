@@ -3,6 +3,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import requests
 import os
+import sys
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
@@ -23,8 +24,11 @@ LUCIEN_SYSTEM_PROMPT = (
 @app.route("/chat", methods=["GET", "POST", "OPTIONS"])
 @cross_origin(origins="*", methods=["GET", "POST", "OPTIONS"], allow_headers=["Content-Type"])
 def chat():
+    print(f"\n--- Incoming {request.method} request ---", file=sys.stderr)
+    print(f"Headers: {dict(request.headers)}", file=sys.stderr)
+    print(f"Body: {request.data}", file=sys.stderr)
+
     if request.method == "OPTIONS":
-        # Handle preflight request
         return '', 204
 
     if request.method == "GET":
@@ -52,7 +56,7 @@ def chat():
         try:
             return jsonify(response.json()["choices"][0]["message"]["content"])
         except Exception as e:
-            print("ERROR:", e)
+            print("ERROR:", e, file=sys.stderr)
             return jsonify("Something went wrong with Lucien's response.")
 
 @app.route("/", methods=["GET"])
