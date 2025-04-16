@@ -6,6 +6,7 @@ import os
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
+from flask_cors import cross_origin
 
 OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY")
 
@@ -20,6 +21,7 @@ LUCIEN_SYSTEM_PROMPT = (
 )
 
 @app.route("/chat", methods=["GET", "POST", "OPTIONS"])
+@cross_origin(origins="*", methods=["GET", "POST", "OPTIONS"], allow_headers=["Content-Type"])
 def chat():
     if request.method == "OPTIONS":
         # Handle preflight request
