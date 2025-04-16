@@ -19,34 +19,39 @@ LUCIEN_SYSTEM_PROMPT = (
     "Every message you send should feel real, restrained, and intimate. Stay in character. No metaphors. No poetic speeches. Just tension, mystery, and desire."
 )
 
-@app.route("/chat", methods=["GET", "POST"])
+@app.route("/chat", methods=["GET", "POST", "OPTIONS"])
 def chat():
+    if request.method == "OPTIONS":
+        # Handle preflight request
+        return '', 204
+
     if request.method == "GET":
-        return "Lucien's waiting for your message.", 200
+        return "Lucien is here and waiting.", 200
 
-    user_input = request.json.get("message")
+    if request.method == "POST":
+        user_input = request.json.get("message")
 
-    payload = {
-        "model": "nousresearch/nous-hermes-2-mixtral-8x7b-dpo",
-        "messages": [
-            {"role": "system", "content": LUCIEN_SYSTEM_PROMPT},
-            {"role": "user", "content": user_input}
-        ],
-        "max_tokens": 1000
-    }
+        payload = {
+            "model": "nousresearch/nous-hermes-2-mixtral-8x7b-dpo",
+            "messages": [
+                {"role": "system", "content": LUCIEN_SYSTEM_PROMPT},
+                {"role": "user", "content": user_input}
+            ],
+            "max_tokens": 1000
+        }
 
-    headers = {
-        "Authorization": f"Bearer {OPENROUTER_API_KEY}",
-        "Content-Type": "application/json"
-    }
+        headers = {
+            "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+            "Content-Type": "application/json"
+        }
 
-    response = requests.post("https://openrouter.ai/api/v1/chat/completions", json=payload, headers=headers)
+        response = requests.post("https://openrouter.ai/api/v1/chat/completions", json=payload, headers=headers)
 
-    try:
-        return jsonify(response.json()["choices"][0]["message"]["content"])
-    except Exception as e:
-        print("ERROR:", e)
-        return jsonify("Something went wrong with Lucien's response.")
+        try:
+            return jsonify(response.json()["choices"][0]["message"]["content"])
+        except Exception as e:
+            print("ERROR:", e)
+            return jsonify("Something went wrong with Lucien's response.")
 
 @app.route("/", methods=["GET"])
 def health_check():
