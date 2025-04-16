@@ -44,6 +44,10 @@ def chat():
     except Exception as e:
         print("ERROR:", e)
         return jsonify("Something went wrong with Lucien's response.")
-    
+
+@app.route("/", methods=["GET"])
+def health_check():
+    return "Lucien is alive.", 200
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
