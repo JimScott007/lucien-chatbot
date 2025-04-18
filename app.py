@@ -54,7 +54,9 @@ def chat():
         response = requests.post("https://openrouter.ai/api/v1/chat/completions", json=payload, headers=headers)
 
         try:
-            return jsonify(response.json()["choices"][0]["message"]["content"])
+            return response.json()["choices"][0]["message"]["content"]
+            lucien_reply = response.json()["choices"][0]["message"]["content"].strip().strip('"').strip("'")
+            return lucien_reply
         except Exception as e:
             print("ERROR:", e, file=sys.stderr)
             return jsonify("Something went wrong with Lucien's response.")
