@@ -73,5 +73,19 @@ def chat():
 def health_check():
     return "Lucien is alive.", 200
 
+@app.route("/", methods=["GET"])
+def health_check():
+    try:
+        response = supabase.table("characters").select("*").eq("name", "Sophia").execute()
+        if response.data:
+            print("✅ Supabase connected. Sophia prompt preview:")
+            print(response.data[0]["system_prompt"][:150])  # Show part of the prompt
+        else:
+            print("⚠️ No character named Sophia found.")
+        return "Lucien is alive and Supabase is connected.", 200
+    except Exception as e:
+        print("❌ Supabase connection error:", e)
+        return "Lucien is alive, but Supabase failed.", 500
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
